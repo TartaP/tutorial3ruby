@@ -10,6 +10,12 @@ public class EnemyController : MonoBehaviour
 
     public ParticleSystem smokeEffect;
 
+    public AudioSource musicSource;
+    public AudioClip walking;
+    public AudioClip fixmotion;
+
+    private RubyController rubyController;
+
     Rigidbody2D rigidbody2D;
     float timer;
     int direction = 1;
@@ -23,6 +29,20 @@ public class EnemyController : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         timer = changeTime;
         animator = GetComponent<Animator>();
+        GameObject rubyControllerObject = GameObject.FindWithTag("RubyController");
+        musicSource.clip = walking;
+        musicSource.Play();
+        musicSource.loop = true;
+
+        if (rubyControllerObject !=null)
+        {
+            rubyController = rubyControllerObject.GetComponent<RubyController>();
+            print ("Found the RubyController Script!");
+        }
+        if (rubyController == null)
+        {
+            print ("Cannot find GameController Script!");
+        }
     }
 
     void Update()
@@ -73,14 +93,24 @@ public class EnemyController : MonoBehaviour
         if (player != null)
         {
             player.ChangeHealth(-1);
+
         }
+       
     }
     public void Fix()
     {
+        rubyController.ChangeScore(1);
         broken = false;
         rigidbody2D.simulated = false;
         animator.SetTrigger("Fixed");
+        musicSource.clip = fixmotion;
+        musicSource.Play();
+        musicSource.loop = false;
 
         smokeEffect.Stop();
+        Destroy(smokeEffect.gameObject);
+        
+        
+        
     }
 }
